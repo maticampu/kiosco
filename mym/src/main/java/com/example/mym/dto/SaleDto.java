@@ -12,6 +12,6 @@ import java.util.ArrayList;
 @Builder
 
 public class SaleDto {
-    ArrayList<SaleDto> saleDtos;
+    ArrayList<SaleItemDto> saleItemDtos;
     LocalDateTime saleDate;
 }
