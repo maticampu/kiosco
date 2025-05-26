@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/products")
@@ -17,18 +18,19 @@ public class ProductController {
     }
 
     @GetMapping
-    public ArrayList<ProductDto> getProducts() {
+    public List<ProductDto> getProducts() {
         return productService.getProducts();
     }
 
-    @GetMapping("/{id]")
-    public ArrayList<ProductDto> getProduct(@PathVariable Long id) {
-        return productService.getProductById(id);
+    @GetMapping("/{code}")
+    public List<ProductDto> getProductsByCode(@PathVariable String code) {
+        return productService.getProductsByCode(code);
     }
 
     @PostMapping
+    @ResponseBody
     public ProductDto createProduct(@RequestBody ProductDto productDto) {
-        return productService.saveProduct();
+        return productService.saveProduct(productDto);
     }
 
 }

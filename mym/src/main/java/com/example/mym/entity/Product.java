@@ -1,28 +1,26 @@
 package com.example.mym.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
-@Table(name="product")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class Product {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column
-    private Long code;
-    @Column
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq")
+    @SequenceGenerator(name = "product_seq", sequenceName = "product_sequence", allocationSize = 1)
+    private Long productId;
+
+    private String code;
+
     private String name;
-    @Column
+
     private BigDecimal price;
 }
