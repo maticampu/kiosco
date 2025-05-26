@@ -2,6 +2,7 @@ package com.example.mym.controller;
 
 import com.example.mym.dto.ProductDto;
 import com.example.mym.service.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,11 +17,13 @@ public class ProductController {
     }
 
     @GetMapping
+    @ResponseBody
     public List<ProductDto> getProducts() {
         return productService.getProducts();
     }
 
     @GetMapping("/{code}")
+    @ResponseBody
     public List<ProductDto> getProductsByCode(@PathVariable String code) {
         return productService.getProductsByCode(code);
     }
@@ -31,4 +34,14 @@ public class ProductController {
         return productService.saveProduct(productDto);
     }
 
+    @PutMapping
+    @ResponseBody
+    public ProductDto updateProduct(@RequestBody ProductDto productDto) {
+        return productService.updateProduct(productDto);
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
+        return productService.deleteProduct(productId);
+    }
 }
