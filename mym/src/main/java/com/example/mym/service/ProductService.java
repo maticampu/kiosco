@@ -49,7 +49,6 @@ public class ProductService {
                 .name(productSaved.getName())
                 .price(productSaved.getPrice())
                 .build();
-        System.out.println(productDtoSaved);
         return productDtoSaved;
     }
 }
