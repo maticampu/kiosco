@@ -9,7 +9,9 @@ import lombok.Data;
 @Builder
 
 public class SaleItemDto {
+
     ProductDto product;
+
     Long amount;
 
 }

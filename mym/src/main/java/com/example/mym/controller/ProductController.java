@@ -2,6 +2,7 @@ package com.example.mym.controller;
 
 import com.example.mym.dto.ProductDto;
 import com.example.mym.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class ProductController {
 
     @PostMapping
     @ResponseBody
-    public ProductDto createProduct(@RequestBody ProductDto productDto) {
+    public ProductDto createProduct(@Valid @RequestBody ProductDto productDto) {
         return productService.saveProduct(productDto);
     }
 
@@ -41,7 +42,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
+    public ProductDto deleteProduct(@PathVariable Long productId) {
         return productService.deleteProduct(productId);
     }
 }

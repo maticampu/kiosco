@@ -1,5 +1,6 @@
 package com.example.mym.service;
 
+import com.example.mym.controller.ProductController;
 import com.example.mym.dto.ProductDto;
 import com.example.mym.entity.Product;
 import com.example.mym.exception.ProductException;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -20,24 +22,12 @@ public class ProductService {
 
     public List<ProductDto> getProductsByCode(String code) {
         List<Product> products = productRepository.findProductsByCode(code);
-        return products.stream().map((product) -> ProductDto.builder()
-                .productId(product.getProductId())
-                .code(product.getCode())
-                .name(product.getName())
-                .price(product.getPrice())
-                .build())
-        .toList() ;
+        return products.stream().map(this::toProductDto).toList() ;
     }
 
     public List<ProductDto> getProducts() {
         List<Product> products = productRepository.findAll();
-        System.out.println(products);
-        List<ProductDto> productDtos = products.stream().map((product) -> ProductDto.builder()
-                .productId(product.getProductId())
-                .code(product.getCode())
-                .name(product.getName())
-                .price(product.getPrice())
-                .build()).toList();
+        List<ProductDto> productDtos = products.stream().map(this::toProductDto).toList();
         return productDtos;
     }
 
@@ -51,18 +41,9 @@ public class ProductService {
         if (productDto.getPrice() == null) {
             throw new ProductException("Product price is required", 1);
         }
-        Product product = Product.builder()
-                .code(productDto.getCode())
-                .name(productDto.getName())
-                .price(productDto.getPrice())
-                .build();
+        Product product = toProduct(productDto);
         Product productSaved= productRepository.save(product);
-        ProductDto productDtoSaved = ProductDto.builder()
-                .productId(productSaved.getProductId())
-                .code(productSaved.getCode())
-                .name(productSaved.getName())
-                .price(productSaved.getPrice())
-                .build();
+        ProductDto productDtoSaved = toProductDto(productSaved);
         return productDtoSaved;
     }
 
@@ -84,28 +65,39 @@ public class ProductService {
         if (!productRepository.existsById(productDto.getProductId())) {
             throw new ProductException("Product not found", 1);
         }
+        Product product = toProduct(productDto);
+        Product productUpdated= productRepository.save(product);
+        ProductDto productDtoSaved = toProductDto(productUpdated);
+        return productDtoSaved;
+    }
+
+    public ProductDto deleteProduct(Long productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isEmpty()){
+            throw new ProductException("Product not found", 2);
+        }
+
+        productRepository.deleteById(productId);
+        return toProductDto(product.get());
+    }
+
+    private ProductDto toProductDto(Product product) {
+        ProductDto productDto = ProductDto.builder()
+                .productId(product.getProductId())
+                .code(product.getCode())
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
+        return productDto;
+    }
+
+    private Product toProduct(ProductDto productDto) {
         Product product = Product.builder()
                 .productId(productDto.getProductId())
                 .code(productDto.getCode())
                 .name(productDto.getName())
                 .price(productDto.getPrice())
                 .build();
-        Product productUpdated= productRepository.save(product);
-        ProductDto productDtoSaved = ProductDto.builder()
-                .productId(productUpdated.getProductId())
-                .code(productUpdated.getCode())
-                .name(productUpdated.getName())
-                .price(productUpdated.getPrice())
-                .build();
-        return productDtoSaved;
-    }
-
-    public ResponseEntity<?> deleteProduct(Long productId) {
-        Optional<Product> product = productRepository.findById(productId);
-        if (product.isEmpty()){
-            throw new ProductException("Product not found", 2);
-        }
-        productRepository.deleteById(productId);
-        return ResponseEntity.noContent().build();
+        return product;
     }
 }

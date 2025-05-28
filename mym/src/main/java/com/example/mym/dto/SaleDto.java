@@ -10,8 +10,9 @@ import java.util.ArrayList;
 @Data
 @AllArgsConstructor
 @Builder
-
 public class SaleDto {
+
     ArrayList<SaleItemDto> saleItemDtos;
+
     LocalDateTime saleDate;
 }
