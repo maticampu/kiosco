@@ -20,15 +20,7 @@ public class HandlerException {
     public ResponseEntity<ProductErrorMessage> handleProductException(ProductException e) {
         ProductErrorMessage response = new ProductErrorMessage();
         response.setError(e.getMessage());
-
-        if (e.getCode() == 1){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-
-        if (e.getCode() == 2)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
     @ExceptionHandler(value = DataIntegrityViolationException.class)
     public ResponseEntity<ProductErrorMessage> handleDataIntegrityViolationException(DataIntegrityViolationException e) {

@@ -13,6 +13,7 @@ CREATE TABLE product
     code       VARCHAR(255) NOT NULL UNIQUE ,
     name       VARCHAR(255) NOT NULL UNIQUE ,
     price      DECIMAL NOT NULL ,
+    active     BOOLEAN NOT NULL DEFAULT true,
     CONSTRAINT pk_product PRIMARY KEY (product_id)
 );
 

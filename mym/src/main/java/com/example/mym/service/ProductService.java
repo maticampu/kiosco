@@ -1,17 +1,18 @@
 package com.example.mym.service;
 
-import com.example.mym.controller.ProductController;
 import com.example.mym.dto.ProductDto;
 import com.example.mym.entity.Product;
 import com.example.mym.exception.ProductException;
 import com.example.mym.repository.ProductRepository;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class ProductService {
 
     ProductRepository productRepository;
@@ -26,59 +27,49 @@ public class ProductService {
     }
 
     public List<ProductDto> getProducts() {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findALlByActiveTrue();
         List<ProductDto> productDtos = products.stream().map(this::toProductDto).toList();
         return productDtos;
     }
 
-    public ProductDto saveProduct(ProductDto productDto) {
-        if (productDto.getCode() == null) {
-            throw new ProductException("Product code is required", 1);
-        }
-        if (productDto.getName() == null) {
-            throw new ProductException("Product name is required", 1);
-        }
-        if (productDto.getPrice() == null) {
-            throw new ProductException("Product price is required", 1);
-        }
+    public ProductDto saveProduct(@Valid ProductDto productDto) {
         Product product = toProduct(productDto);
+        product.setActive(true);
         Product productSaved= productRepository.save(product);
         ProductDto productDtoSaved = toProductDto(productSaved);
         return productDtoSaved;
     }
 
     public ProductDto updateProduct(ProductDto productDto) {
-
-        //Como se pasa el id del producto, cuando el front mande el updated, va a tener el id
-        if (productDto.getProductId() == null) {
-            throw new ProductException("Product id is required", 1);
+    if (!productRepository.existsByProductIdAndActiveTrue(productDto.getProductId())) {
+            throw new ProductException("Product not found");
         }
-        if (productDto.getCode() == null) {
-            throw new ProductException("Product code is required", 1);
-        }
-        if (productDto.getName() == null) {
-            throw new ProductException("Product name is required", 1);
-        }
-        if (productDto.getPrice() == null) {
-            throw new ProductException("Product price is required", 1);
-        }
-        if (!productRepository.existsById(productDto.getProductId())) {
-            throw new ProductException("Product not found", 1);
-        }
+        System.out.println(productDto.getProductId());
         Product product = toProduct(productDto);
+        product.setActive(true);
         Product productUpdated= productRepository.save(product);
         ProductDto productDtoSaved = toProductDto(productUpdated);
         return productDtoSaved;
     }
 
     public ProductDto deleteProduct(Long productId) {
-        Optional<Product> product = productRepository.findById(productId);
+        Optional<Product> product = productRepository.findActiveById(productId);
         if (product.isEmpty()){
-            throw new ProductException("Product not found", 2);
+            throw new ProductException("Product not found");
         }
-
         productRepository.deleteById(productId);
-        return toProductDto(product.get());
+        ProductDto productDeleted = toProductDto(product.get());
+        return productDeleted;
+    }
+
+    public ProductDto softDeleteProduct(Long productId) {
+        Optional<Product> product = productRepository.findActiveById(productId);
+        if (product.isEmpty()){
+            throw new ProductException("Product not found");
+        }
+        productRepository.logicalDeleteById(productId);
+        ProductDto productDeleted = toProductDto(product.get());
+        return productDeleted;
     }
 
     private ProductDto toProductDto(Product product) {

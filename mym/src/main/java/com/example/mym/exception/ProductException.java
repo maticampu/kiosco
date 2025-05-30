@@ -10,10 +10,7 @@ import java.util.Optional;
 
 public class ProductException extends RuntimeException {
 
-    private Integer code;
-
-    public ProductException(String message, Integer code) {
+    public ProductException(String message) {
         super(message);
-        this.code = code;
     }
 }

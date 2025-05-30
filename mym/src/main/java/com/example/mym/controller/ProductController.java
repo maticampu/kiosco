@@ -37,12 +37,19 @@ public class ProductController {
 
     @PutMapping
     @ResponseBody
-    public ProductDto updateProduct(@RequestBody ProductDto productDto) {
+    public ProductDto updateProduct(@Valid @RequestBody ProductDto productDto) {
         return productService.updateProduct(productDto);
     }
 
-    @DeleteMapping("/{productId}")
+    @DeleteMapping("/hardDelete/{productId}")
+    @ResponseBody
     public ProductDto deleteProduct(@PathVariable Long productId) {
         return productService.deleteProduct(productId);
+    }
+
+    @DeleteMapping("/{productId}")
+    @ResponseBody
+    public ProductDto softDeleteProduct(@PathVariable Long productId) {
+        return productService.softDeleteProduct(productId);
     }
 }
