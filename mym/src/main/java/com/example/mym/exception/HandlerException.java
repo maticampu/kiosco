@@ -22,6 +22,7 @@ public class HandlerException {
         response.setError(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
     @ExceptionHandler(value = DataIntegrityViolationException.class)
     public ResponseEntity<ProductErrorMessage> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         ProductErrorMessage response = new ProductErrorMessage();

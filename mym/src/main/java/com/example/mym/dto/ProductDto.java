@@ -1,4 +1,5 @@
 package com.example.mym.dto;
+import com.example.mym.entity.HistoricalProduct;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class ProductDto {
     String name;
 
     @NotBlank(message = "el codigo no puede ser vacio")
+    @Size(max = 50, message = "el tamaño maximo son 150 caracteres")
     String code;
 
     @DecimalMin(value = "0", message = "el precio debe ser mayor que 0")

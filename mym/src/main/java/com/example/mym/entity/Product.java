@@ -21,15 +21,13 @@ public class Product {
     private Long productId;
 
     @NotNull(message = "el codigo no puede ser vacio")
+    @Size(max = 50, message = "el tamaño maximo son 150 caracteres")
     private String code;
 
     @NotNull(message = "el nombre no puede ser vacio ")
     @Size(max = 150, message = "el tamaño maximo son 150 caracteres")
     private String name;
 
-    @DecimalMin(value = "0", message = "el precio debe ser mayor que 0")
-    @NotNull
-    private BigDecimal price;
-
-    private boolean active;
+    @Builder.Default
+    private boolean active = true;
 }
