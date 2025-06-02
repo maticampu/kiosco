@@ -59,24 +59,26 @@ public class ProductService {
         HistoricalProduct historicalProductSaved = historicalProductRepository.save(historicalProductToSave);
         ProductDto productDtoSaved = toProductDto(productSaved);
         productDtoSaved.setPrice(historicalProductSaved.getPrice());
+        productSaved.setHistoricalProduct(historicalProductSaved);
+        productRepository.save(productSaved);
         return productDtoSaved;
     }
 
     public ProductDto updateProduct(ProductDto productToSave) {
         Product productFound = productRepository.findById(productToSave.getProductId())
                                                 .orElseThrow(() -> new ProductException("Product not found"));
-        HistoricalProduct historicalProduct = historicalProductRepository.findByLastProduct(productFound);
-        BigDecimal currentPrice = historicalProduct.getPrice();
+        HistoricalProduct historicalProductToSave = historicalProductRepository.findByLastProduct(productFound);
+        BigDecimal currentPrice = historicalProductToSave.getPrice();
         if (productToSave.getPrice().compareTo(currentPrice) != 0){
-            HistoricalProduct historicalProductToSave = HistoricalProduct.builder()
+            historicalProductToSave = HistoricalProduct.builder()
                     .product(productFound)
                     .price(productToSave.getPrice())
                     .updateDate(LocalDateTime.now())
                     .build();
             historicalProductRepository.save(historicalProductToSave);
-
         }
             Product product = toProduct(productToSave);
+            product.setHistoricalProduct(historicalProductToSave);
             Product productUpdated = productRepository.save(product);
             ProductDto productDtoUpdated = toProductDto(productUpdated);
             productDtoUpdated.setPrice(historicalProductRepository.findByLastProduct(productUpdated).getPrice());

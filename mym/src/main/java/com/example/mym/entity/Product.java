@@ -20,6 +20,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
+    @OneToOne
+    private HistoricalProduct historicalProduct;
+
     @NotNull(message = "el codigo no puede ser vacio")
     @Size(max = 50, message = "el tamaño maximo son 150 caracteres")
     private String code;
