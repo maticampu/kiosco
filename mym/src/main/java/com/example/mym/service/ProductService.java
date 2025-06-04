@@ -29,18 +29,18 @@ public class ProductService {
 
     public List<ProductDto> getProductsByCode(String code) {
         List<Product> products = productRepository.findProductsByCode(code);
-        return products.stream().map(a -> {
-                ProductDto productToShow = toProductDto(a);
-                productToShow.setPrice(historicalProductRepository.findByLastProduct(a).getPrice());
+        return products.stream().map(product -> {
+                ProductDto productToShow = toProductDto(product);
+                productToShow.setPrice(product.getHistoricalProduct().getPrice());
                 return productToShow;})
                     .toList();
     }
 
     public List<ProductDto> getProducts() {
         List<Product> products = productRepository.findALlByActiveTrue();
-        List<ProductDto> productDtos = products.stream().map(a -> {
-                    ProductDto productToShow = toProductDto(a);
-                    productToShow.setPrice(historicalProductRepository.findByLastProduct(a).getPrice());
+        List<ProductDto> productDtos = products.stream().map(product -> {
+                    ProductDto productToShow = toProductDto(product);
+                    productToShow.setPrice(product.getHistoricalProduct().getPrice());
                     return productToShow;
                 })
                 .toList();
