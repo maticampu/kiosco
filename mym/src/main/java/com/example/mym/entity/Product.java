@@ -1,6 +1,9 @@
 package com.example.mym.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -14,13 +17,20 @@ import java.math.BigDecimal;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq")
-    @SequenceGenerator(name = "product_seq", sequenceName = "product_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
+    @OneToOne
+    private HistoricalProduct historicalProduct;
+
+    @NotNull(message = "el codigo no puede ser vacio")
+    @Size(max = 50, message = "el tamaño maximo son 150 caracteres")
     private String code;
 
+    @NotNull(message = "el nombre no puede ser vacio ")
+    @Size(max = 150, message = "el tamaño maximo son 150 caracteres")
     private String name;
 
-    private BigDecimal price;
+    @Builder.Default
+    private boolean active = true;
 }

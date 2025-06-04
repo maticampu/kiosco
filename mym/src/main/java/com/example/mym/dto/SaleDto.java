@@ -1,17 +1,25 @@
 package com.example.mym.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.springframework.web.service.annotation.GetExchange;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-
+@Getter
+@Setter
 public class SaleDto {
-    ArrayList<SaleItemDto> saleItemDtos;
-    LocalDateTime saleDate;
+
+    @NotNull
+    Long productId;
+
+    @NotNull
+    @Min(1)
+    int quantity;
 }
