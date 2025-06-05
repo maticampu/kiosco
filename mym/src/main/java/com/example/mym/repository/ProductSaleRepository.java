@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductSaleRepository extends JpaRepository<ProductSale, Long> {
-    @Query("SELECT ps FROM ProductSale ps WHERE DATE(ps.sale.date) = :date")
-    public List<ProductSale> getProductsSaleByDate (LocalDate date);
+
+    //filtrar por columna
+    @Query("SELECT ps FROM ProductSale ps WHERE ps.sale.date BETWEEN :start AND :end ")
+    List<ProductSale> getProductsSaleByDate (LocalDateTime start, LocalDateTime end);
 }

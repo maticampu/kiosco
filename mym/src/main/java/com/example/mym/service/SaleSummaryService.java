@@ -27,14 +27,10 @@ public class SaleSummaryService {
     }
 
     public SaleSummaryDto getDailySaleSummary(){
-        List<Sale> todaySales = saleRepository.getSalesByDate(LocalDate.now());
-        if(todaySales.isEmpty()){
-            throw new ProductException("espera");
-        }
-        List<ProductSale> todayProductSales = productSaleRepository.getProductsSaleByDate(LocalDate.now());
-        if(todayProductSales.isEmpty()){
-            throw new ProductException("esperame");
-        }
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime end = start.plusDays(1);
+        List<Sale> todaySales = saleRepository.getSalesByDate(start, end);
+        List<ProductSale> todayProductSales = productSaleRepository.getProductsSaleByDate(start, end);
         int totalSales = todaySales.size();
         BigDecimal totalAmount = todaySales.stream().map(Sale::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
         int totalProductQuantity = todayProductSales.stream().mapToInt(ProductSale::getQuantity).sum();
