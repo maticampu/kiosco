@@ -1,5 +1,4 @@
 package com.example.mym.dto;
-import com.example.mym.entity.HistoricalProduct;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
