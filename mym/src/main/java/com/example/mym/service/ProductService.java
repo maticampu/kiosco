@@ -29,11 +29,13 @@ public class ProductService {
 
     public List<ProductDto> getProductsByCode(String code) {
         List<Product> products = productRepository.findProductsByCode(code);
+        System.out.println("hola");
         return products.stream().map(product -> {
                 ProductDto productToShow = toProductDto(product);
                 productToShow.setPrice(product.getHistoricalProduct().getPrice());
                 return productToShow;})
                     .toList();
+
     }
 
     public List<ProductDto> getProducts() {
