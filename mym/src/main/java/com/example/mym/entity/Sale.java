@@ -1,9 +1,7 @@
 package com.example.mym.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.mym.dto.MeanOfPayment;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -24,4 +22,7 @@ public class Sale {
     private LocalDateTime date;
 
     private BigDecimal amount;
+
+    @Enumerated(EnumType.STRING)
+    private MeanOfPayment meanOfPayment;
 }

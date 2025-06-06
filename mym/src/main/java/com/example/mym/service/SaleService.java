@@ -9,6 +9,7 @@ import com.example.mym.repository.HistoricalProductRepository;
 import com.example.mym.repository.ProductRepository;
 import com.example.mym.repository.ProductSaleRepository;
 import com.example.mym.repository.SaleRepository;
+import com.example.mym.supportClass.ProductAndQuantity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,20 +33,22 @@ public class SaleService {
         this.productSaleRepository = productSaleRepository;
     }
 
+    public SaleDto createSale(SaleDto newSale) {
+        List< ProductAndQuantity> newSaleList = newSale.getProductAndQuantity();
 
-    public List<SaleDto> createSale(List<SaleDto> newSaleList) {
         BigDecimal totalAmount = newSaleList.stream().map(saleItem ->
-            {
-                Optional<Product> productFound = productRepository.findActiveById(saleItem.getProductId());
-                if (productFound.isEmpty()){
-                    throw new ProductException("Unable to find product with id: " + saleItem.getProductId());
-                }
-                BigDecimal parcialAmount = historicalProductRepository.findLastPriceByProduct(productFound.get()).multiply(BigDecimal.valueOf(saleItem.getQuantity()));
-                return parcialAmount;
-            }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        {
+            Optional<Product> productFound = productRepository.findActiveById(saleItem.getProductId());
+            if (productFound.isEmpty()){
+                throw new ProductException("Unable to find product with id: " + saleItem.getProductId());
+            }
+            BigDecimal parcialAmount = historicalProductRepository.findLastPriceByProduct(productFound.get()).multiply(BigDecimal.valueOf(saleItem.getQuantity()));
+            return parcialAmount;
+        }).reduce(BigDecimal.ZERO, BigDecimal::add);
         Sale saleToSaved = Sale.builder()
                 .date(LocalDateTime.now())
                 .amount(totalAmount)
+                .meanOfPayment(newSale.getMeanOfPayment())
                 .build();
         Sale saleSaved = saleRepository.save(saleToSaved);
         List<ProductSale> saleList = newSaleList.stream().map(saleItem ->
@@ -61,13 +64,56 @@ public class SaleService {
                             .build();
                     return productSaleRepository.save(productSaleToSave);
                 }
-                ).toList();
+        ).toList();
 
-        return saleList.stream().map(saleItem ->
-                        SaleDto.builder()
-                                .productId(saleItem.getHistoricalProduct().getProduct().getProductId())
-                                .quantity(saleItem.getQuantity())
-                                .build()
-                ).toList();
+        List <ProductAndQuantity> productSaleSaved = saleList.stream().map(saleItem ->
+                ProductAndQuantity.builder()
+                        .productId(saleItem.getHistoricalProduct().getProduct().getProductId())
+                        .quantity(saleItem.getQuantity())
+                        .build()
+        ).toList();
+
+        return SaleDto.builder()
+                .productAndQuantity(productSaleSaved)
+                .meanOfPayment(saleSaved.getMeanOfPayment())
+                .build();
     }
+
+//    public List<SaleDto> createSale(List<SaleDto> newSaleList) {
+//        BigDecimal totalAmount = newSaleList.stream().map(saleItem ->
+//            {
+//                Optional<Product> productFound = productRepository.findActiveById(saleItem.getProductId());
+//                if (productFound.isEmpty()){
+//                    throw new ProductException("Unable to find product with id: " + saleItem.getProductId());
+//                }
+//                BigDecimal parcialAmount = historicalProductRepository.findLastPriceByProduct(productFound.get()).multiply(BigDecimal.valueOf(saleItem.getQuantity()));
+//                return parcialAmount;
+//            }).reduce(BigDecimal.ZERO, BigDecimal::add);
+//        Sale saleToSaved = Sale.builder()
+//                .date(LocalDateTime.now())
+//                .amount(totalAmount)
+//                .build();
+//        Sale saleSaved = saleRepository.save(saleToSaved);
+//        List<ProductSale> saleList = newSaleList.stream().map(saleItem ->
+//                {
+//                    Optional<Product> productFound = productRepository.findActiveById(saleItem.getProductId());
+//                    if (productFound.isEmpty()){
+//                        throw new ProductException("Unable to find product with id: " + saleItem.getProductId());
+//                    }
+//                    ProductSale productSaleToSave = ProductSale.builder()
+//                            .sale(saleSaved)
+//                            .historicalProduct(historicalProductRepository.findByLastProduct(productFound.get()))
+//                            .quantity(saleItem.getQuantity())
+//                            .build();
+//                    return productSaleRepository.save(productSaleToSave);
+//                }
+//                ).toList();
+//
+//        return saleList.stream().map(saleItem ->
+//                        SaleDto.builder()
+//                                .productId(saleItem.getHistoricalProduct().getProduct().getProductId())
+//                                .quantity(saleItem.getQuantity())
+//                                .build()
+//                ).toList();
+//    }
 }

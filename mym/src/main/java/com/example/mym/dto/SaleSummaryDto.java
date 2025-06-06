@@ -1,8 +1,10 @@
 package com.example.mym.dto;
 
+import com.example.mym.supportClass.MeanOfPaymentAndAmount;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,5 +19,7 @@ public class SaleSummaryDto {
     private int productQuantity;
 
     private BigDecimal amount;
+
+    private List<MeanOfPaymentAndAmount> meanOfPaymentAndAmount;
 
 }

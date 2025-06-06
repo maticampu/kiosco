@@ -18,8 +18,8 @@ public class SaleController {
     }
 
     @PostMapping
-    public List<SaleDto> saleCreated(@RequestBody List<SaleDto> newSaleList) {
-        return saleService.createSale(newSaleList);
+    public SaleDto saleCreated(@RequestBody SaleDto newSale) {
+        return saleService.createSale(newSale);
     }
 
 }
