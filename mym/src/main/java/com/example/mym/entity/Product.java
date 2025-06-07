@@ -1,12 +1,9 @@
 package com.example.mym.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.math.BigDecimal;
 
 @Entity
 @Getter
