@@ -1,0 +1,1 @@
+ALTER TABLE sale ADD COLUMN IF NOT EXISTS mean_of_payment VARCHAR(15);
